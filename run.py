@@ -9,13 +9,14 @@ from __future__ import annotations
 
 import argparse
 import random
-from dataclasses import asdict, dataclass
-from pathlib import Path
-from typing import Dict, List, Tuple
+from dataclasses import dataclass
+from typing import List, Tuple
+from datetime import datetime
 
 import numpy as np
 import torch
 from sklearn.metrics import average_precision_score, roc_auc_score
+from pandas import DataFrame
 from tqdm import trange
 
 from data_utils import load_mat_dataset
@@ -94,7 +95,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run NSReg on GAD .mat datasets.")
 
     # Required/common arguments
-    parser.add_argument("--dataset", type=str, required=True, help="Dataset name, e.g. ACM or ACM.mat")
+    parser.add_argument(
+        "--dataset", type=str, required=True, help="Dataset name, e.g. ACM or ACM.mat"
+    )
     parser.add_argument("--data_dir", type=str, default="~/datasets/GAD/mat")
     parser.add_argument("--n_trials", type=int, default=5)
     parser.add_argument("--seed", type=int, default=42)
@@ -111,9 +114,30 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--nsreg_weight", type=float, default=1.0)
 
     # Supervised split hyperparameters
-    parser.add_argument("--train_ratio", type=float, default=0.4, help="Ratio of normal nodes used as labelled normal training data.")
-    parser.add_argument("--num_train_anomaly", type=int, default=10, help="Number of labelled anomaly nodes used as seen anomalies.")
-    parser.add_argument("--balanced_loss", action="store_true", help="Use BCE pos_weight computed from the training split.")
+    parser.add_argument(
+        "--train_ratio",
+        type=float,
+        default=0.4,
+        help="Ratio of normal nodes used as labelled normal training data.",
+    )
+    parser.add_argument(
+        "--num_train_anomaly",
+        type=int,
+        default=10,
+        help="Number of labelled anomaly nodes used as seen anomalies.",
+    )
+    parser.add_argument(
+        "--balanced_loss",
+        action="store_true",
+        help="Use BCE pos_weight computed from the training split.",
+    )
+
+    parser.add_argument(
+        "--result-csv",
+        dest="result_csv",
+        default=None,
+        help="Append a summary row to a CSV file (e.g. results.csv)",
+    )
 
     return parser.parse_args()
 
@@ -162,27 +186,45 @@ def run_one_trial(args: argparse.Namespace, trial: int, data) -> TrialResult:
 
 def main() -> None:
     args = parse_args()
-    data = load_mat_dataset(args.dataset, args.data_dir)
+    dataset = load_mat_dataset(args.dataset, args.data_dir)
 
     results: List[TrialResult] = []
     for trial in trange(args.n_trials, desc="Trial", position=0, leave=True):
-        results.append(run_one_trial(args, trial, data))
+        results.append(run_one_trial(args, trial, dataset))
 
     aucs = np.array([r.auc for r in results], dtype=float)
     aps = np.array([r.ap for r in results], dtype=float)
 
+    if args.result_csv is not None:
+        data = {
+            "datetime": datetime.now().isoformat(sep=" ", timespec="minutes"),
+            "dataset": dataset.name,
+            "trials": args.n_trials,
+            "auc_mean": float(aucs.mean()),
+            "auc_std": float(aucs.std(ddof=1) if len(aucs) > 1 else 0.0),
+            "auc_max": float(aucs.max()),
+            "auc": f"{aucs.mean()*100:.2f} ± {aucs.std(ddof=1)*100 if len(aucs) > 1 else 0:.2f}({aucs.max()*100:.2f})",
+            "ap_mean": float(aps.mean()),
+            "ap_std": float(aps.std(ddof=1) if len(aps) > 1 else 0.0),
+            "ap_max": float(aps.max()),
+            "ap": f"{aps.mean()*100:.2f} ± {aps.std(ddof=1) if len(aps) > 1 else 0:.2f}({aps.max()*100:.2f})",
+        }
+        DataFrame([data]).to_csv(args.result_csv, index=False, mode="a")
+
     print("=" * 80)
     print("NSReg finished")
-    print(f"dataset      : {data.name}")
-    print(f"num_nodes    : {data.num_nodes}")
-    print(f"num_edges    : {data.edge_index.size(1)}")
-    print(f"num_features : {data.x.size(1)}")
-    print(f"anomaly_rate : {float(data.y.float().mean()):.6f}")
+    print(f"dataset      : {dataset.name}")
+    print(f"num_nodes    : {dataset.num_nodes}")
+    print(f"num_edges    : {dataset.edge_index.size(1)}")
+    print(f"num_features : {dataset.x.size(1)}")
+    print(f"anomaly_rate : {float(dataset.y.float().mean()):.6f}")
     print(f"n_trials     : {args.n_trials}")
     print(f"seed_base    : {args.seed}")
     print("-" * 80)
     for r in results:
-        print(f"trial={r.trial:02d} seed={r.seed:<6d} auc={r.auc:.6f} ap={r.ap:.6f} loss={r.loss:.6f}")
+        print(
+            f"trial={r.trial:02d} seed={r.seed:<6d} auc={r.auc:.6f} ap={r.ap:.6f} loss={r.loss:.6f}"
+        )
     print("-" * 80)
     print(f"AUC: {aucs.mean():.6f} ± {aucs.std(ddof=1) if len(aucs) > 1 else 0.0:.6f}")
     print(f"AP : {aps.mean():.6f} ± {aps.std(ddof=1) if len(aps) > 1 else 0.0:.6f}")
