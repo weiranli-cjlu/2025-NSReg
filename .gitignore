@@ -1,4 +1,2 @@
-.vscode/*
-__pycache__/
-ckpt/mag_cs/*
-.DS_Stor
+__pycache__
+.venv
