@@ -3,7 +3,7 @@
 ## Setup
 ```shell
 uv venv -p 3.12
-uv pip install torch==2.11.0 torch_geometric scikit-learn tqdm --torch-backend=cu128
+uv pip install torch==2.11.0 torch_geometric scikit-learn tqdm optuna pandas --torch-backend=cu128
 ```
 
 本版本将原仓库的 `bash run_scripts/... + yaml config` 运行方式改为统一命令行：
@@ -26,16 +26,6 @@ python run.py --dataset Amazon
 python run.py --dataset YelpChi
 python run.py --dataset t_finance
 ```
-
-## 已移除内容
-
-- 不保存模型 checkpoint。
-- 不保存中间结果。
-- 不使用 `saved_index`。
-- 不使用 shell 脚本启动。
-- 不使用 yaml 配置。
-- 不使用 tensorboard、plot、TSNE、PCA 可视化等与最终指标无关的代码。
-- 训练过程中不打印 epoch 日志，只在所有 trial 结束后打印最终结果。
 
 ## 主要参数
 
@@ -116,7 +106,70 @@ README.md     # 命令行说明与配置示例
 `.mat` 文件字段通常包括 `Network/Attributes/Label` 或 `adj/features/label`。`data_utils.py` 已兼容常见字段名：
 
 - 特征：`x`, `X`, `features`, `Attributes`, `attr`, `node_feat`, `node_features`
-- 标签：`y`, `Y`, `label`, `labels`, `gnd`, `truth`, `Class`
+- 标签：`y`, `Y`, `label`, `labels` `Label`, `gnd`, `truth`, `Class`
 - 图：`edge_index`, `edges`, `edge`, `adj`, `A`, `network`, `Network`, `graph`
 
 如果某个数据集字段名不同，只需要在 `data_utils.py` 顶部的 key 列表中添加字段名。
+
+## 快速调参
+
+```bash
+python tune_optuna.py --dataset ACM --n_trials 50 --eval_trials 3 --device cuda
+```
+
+含义：
+
+- `--n_trials 50`：Optuna 搜索 50 组超参数。
+- `--eval_trials 3`：每组超参数调用 `run.py --n_trials 3`，减少单次偶然性。
+- 最终会输出推荐的 `python run.py ...` 命令。
+- 调参记录保存在 `tune_results/<dataset>/`。
+
+## 推荐流程
+
+先粗调：
+
+```bash
+python tune_optuna.py \
+  --dataset ACM \
+  --n_trials 50 \
+  --eval_trials 2 \
+  --objective auc_ap \
+  --device cuda
+```
+
+再用输出的最佳参数做稳定复现实验：
+
+```bash
+python run.py \
+  --dataset ACM \
+  --n_trials 10 \
+  --seed 42 \
+  --device cuda \
+  --lr <best_lr> \
+  --weight_decay <best_weight_decay> \
+  --epochs <best_epochs> \
+  --hidden_dim <best_hidden_dim> \
+  --emb_dim <best_emb_dim> \
+  --n_layers <best_n_layers> \
+  --dropout <best_dropout> \
+  --nsreg_weight <best_nsreg_weight> \
+  --train_ratio <best_train_ratio> \
+  --num_train_anomaly <best_num_train_anomaly>
+```
+
+## 大数据集建议
+
+YelpChi、Amazon-all、Flickr 等较大图先降低搜索成本：
+
+```bash
+python tune_optuna.py \
+  --dataset YelpChi \
+  --n_trials 30 \
+  --eval_trials 1 \
+  --epochs_choices 100,200 \
+  --hidden_dim_choices 64,128 \
+  --emb_dim_choices 64,128 \
+  --device cuda
+```
+
+找到较好范围后再提高 `--eval_trials` 和 `run.py --n_trials`。

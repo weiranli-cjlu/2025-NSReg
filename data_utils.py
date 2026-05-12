@@ -15,7 +15,7 @@ from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
 
 
 FEATURE_KEYS = ("x", "X", "features", "Attributes", "attr", "node_feat", "node_features")
-LABEL_KEYS = ("y", "Y", "label", "labels", "gnd", "truth", "Class")
+LABEL_KEYS = ("y", "Y", "label", "labels", "Label", "gnd", "truth", "Class")
 EDGE_INDEX_KEYS = ("edge_index", "edges", "edge", "EdgeIndex")
 ADJ_KEYS = ("adj", "A", "network", "Network", "graph", "Graph")
 
