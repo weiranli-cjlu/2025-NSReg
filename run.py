@@ -7,6 +7,7 @@ Example:
 
 from __future__ import annotations
 
+import os
 import argparse
 import random
 from dataclasses import dataclass
@@ -209,7 +210,7 @@ def main() -> None:
             "ap_max": float(aps.max()),
             "ap": f"{aps.mean()*100:.2f} ± {aps.std(ddof=1) if len(aps) > 1 else 0:.2f}({aps.max()*100:.2f})",
         }
-        DataFrame([data]).to_csv(args.result_csv, index=False, mode="a")
+        DataFrame([data]).to_csv(args.result_csv, index=False, mode="a", header=not os.path.exists(args.result_csv))
 
     print("=" * 80)
     print("NSReg finished")
@@ -226,8 +227,8 @@ def main() -> None:
             f"trial={r.trial:02d} seed={r.seed:<6d} auc={r.auc:.6f} ap={r.ap:.6f} loss={r.loss:.6f}"
         )
     print("-" * 80)
-    print(f"AUC: {aucs.mean():.6f} ± {aucs.std(ddof=1) if len(aucs) > 1 else 0.0:.6f}")
-    print(f"AP : {aps.mean():.6f} ± {aps.std(ddof=1) if len(aps) > 1 else 0.0:.6f}")
+    print(f"AUC: {aucs.mean():.6f} ± {aucs.std(ddof=1) if len(aucs) > 1 else 0.0:.6f}({aucs.max()*100:.2f})")
+    print(f"AP : {aps.mean():.6f} ± {aps.std(ddof=1) if len(aps) > 1 else 0.0:.6f}({aps.max()*100:.2f})")
     print("=" * 80)
 
 

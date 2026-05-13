@@ -173,3 +173,24 @@ python tune_optuna.py \
 ```
 
 找到较好范围后再提高 `--eval_trials` 和 `run.py --n_trials`。
+
+## 实验
+```shell
+python run.py --result-csv results.csv --n_trials 10 --dataset book --lr 0.0004328 --weight_decay 0.0006351 --epochs 100 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.31485 --nsreg_weight 0.1976 --train_ratio 0.2456 --num_train_anomaly 0 
+
+python run.py --result-csv results.csv --n_trials 10 --dataset Disney --lr 0.001037 --weight_decay 0.00048696 --epochs 400 --hidden_dim 128 --emb_dim 256 --n_layers 2 --dropout 0.1192 --nsreg_weight 0.0103888 --train_ratio 0.5077 --num_train_anomaly 10 --balanced_loss
+
+python run.py --result-csv results.csv --n_trials 10 --dataset elliptic --lr 0.0011454 --weight_decay 2.1066e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.01525 --nsreg_weight 0.02107 --train_ratio 0.11571 --num_train_anomaly 20 --balanced_loss
+
+python run.py --result-csv results.csv --n_trials 10 --dataset questions --lr 0.001037 --weight_decay 0.00048696 --epochs 400 --hidden_dim 128 --emb_dim 256 --n_layers 2 --dropout 0.1192 --nsreg_weight 0.0103888 --train_ratio 0.50773 --num_train_anomaly 10 --balanced_loss
+
+python run.py --result-csv results.csv --n_trials 10 --dataset Reddit --lr 0.001145 --weight_decay 2.1066e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.01525 --nsreg_weight 0.02107 --train_ratio 0.11571 --num_train_anomaly 20 --balanced_loss
+
+python run.py --result-csv results.csv --n_trials 10 --dataset twitter --lr 0.0007476 --weight_decay 2.342e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15527 --nsreg_weight 0.9717775 --train_ratio 0.115256 --num_train_anomaly 20
+
+python run.py --result-csv results.csv --n_trials 10 --dataset weibo --lr 0.0007476 --weight_decay 2.34238e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15527 --nsreg_weight 0.9717775 --train_ratio 0.25586 --num_train_anomaly 20
+
+python run.py --result-csv results.csv --n_trials 10 --dataset cs
+
+python run.py --result-csv results.csv --n_trials 10 --dataset photo
+```
