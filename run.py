@@ -202,10 +202,8 @@ def main() -> None:
             "datetime": datetime.now().isoformat(sep=" ", timespec="minutes"),
             "dataset": dataset.name,
             "trials": args.n_trials,
-            "auc_mean": float(aucs.mean()),
-            "auc_std": float(aucs.std(ddof=1) if len(aucs) > 1 else 0.0),
-            "auprc_mean": float(auprcs.mean()),
-            "auprc_std": float(auprcs.std(ddof=1) if len(auprcs) > 1 else 0.0),
+            "auc":f"{aucs.mean()*100:.2f}±{aucs.std(ddof=1)*100 if len(aucs) > 1 else 0.0:.2f}({aucs.max()*100:.2f})",
+            "aucprc":f"{auprcs.mean()*100:.2f}±{auprcs.std(ddof=1)*100 if len(auprcs) > 1 else 0.0:.2f}({auprcs.max()*100:.2f})",
         }
         DataFrame([data]).to_csv(args.result_csv, index=False, mode="a", header=not os.path.exists(args.result_csv))
 

@@ -175,10 +175,7 @@ def build_best_command(args: argparse.Namespace, best_params: Dict[str, Any]) ->
     parts = [
         "python run.py",
         f"--dataset {args.dataset}",
-        f"--data_dir {args.data_dir}",
-        f"--n_trials {args.final_trials}",
-        f"--seed {args.seed}",
-        f"--device {args.device}",
+        "--result-csv results.csv --n_trials 10",
         f"--lr {best_params['lr']}",
         f"--weight_decay {best_params['weight_decay']}",
         f"--epochs {best_params['epochs']}",
@@ -192,7 +189,7 @@ def build_best_command(args: argparse.Namespace, best_params: Dict[str, Any]) ->
     ]
     if best_params.get("balanced_loss", False):
         parts.append("--balanced_loss")
-    return " \\\n  ".join(parts)
+    return " ".join(parts)
 
 
 def parse_args() -> argparse.Namespace:
@@ -245,7 +242,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     study_name = args.study_name or f"nsreg_{dataset_name}_{args.objective}"
-    storage = args.storage or f"sqlite:///{output_dir / 'study.db'}"
+    storage = args.storage or f"sqlite:///{Path(args.output_dir).expanduser() / 'study.db'}"
 
     if args.sampler == "tpe":
         sampler = optuna.samplers.TPESampler(seed=args.seed, multivariate=True)
@@ -270,7 +267,7 @@ def main() -> None:
     print(f"eval_trials  : {args.eval_trials}")
     print("=" * 80)
 
-    study.optimize(objective_factory(args), n_trials=args.n_trials, timeout=args.timeout, gc_after_trial=True)
+    study.optimize(objective_factory(args), n_trials=args.n_trials, timeout=args.timeout, gc_after_trial=True, show_progress_bar=True)
 
     trials_df = study.trials_dataframe(attrs=("number", "value", "params", "user_attrs", "state"))
     trials_csv = output_dir / "trials.csv"

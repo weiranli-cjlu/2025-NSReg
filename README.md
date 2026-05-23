@@ -193,4 +193,36 @@ python run.py --result-csv results.csv --n_trials 10 --dataset weibo --lr 0.0007
 python run.py --result-csv results.csv --n_trials 10 --dataset cs
 
 python run.py --result-csv results.csv --n_trials 10 --dataset photo
+
+python run.py --dataset Facebook \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015   --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055   --num_train_anomaly 20
+
+python run.py --dataset cora \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.0011454201562599393 --weight_decay 2.106648601704219e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.015251476046457112 --nsreg_weight 0.021070472806578238 --train_ratio 0.11571459284336713 --num_train_anomaly 20 --balanced_loss
+
+python run.py --dataset citeseer \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.0003571447962001007 --weight_decay 9.682012086882464e-05 --epochs 200 --hidden_dim 64 --emb_dim 32 --n_layers 1 --dropout 0.2955106162913183 --nsreg_weight 0.03852378615162033 --train_ratio 0.46122605763075264 --num_train_anomaly 50
+
+python run.py --dataset tolokers \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
+
+python run.py --dataset ACM \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
+
+python run.py --dataset Flickr \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
+
+python run.py --dataset BlogCatalog \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
+
+python run.py --dataset YelpChi \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
 ```
