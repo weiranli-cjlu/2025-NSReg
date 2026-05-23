@@ -133,7 +133,7 @@ python tune_optuna.py \
   --dataset ACM \
   --n_trials 50 \
   --eval_trials 2 \
-  --objective auc_ap \
+  --objective auc_auprc \
   --device cuda
 ```
 

@@ -40,26 +40,26 @@ except ImportError as exc:
 
 
 AUC_RE = re.compile(r"^AUC:\s*([0-9]*\.?[0-9]+)\s*±\s*([0-9]*\.?[0-9]+)", re.MULTILINE)
-AP_RE = re.compile(r"^AP\s*:\s*([0-9]*\.?[0-9]+)\s*±\s*([0-9]*\.?[0-9]+)", re.MULTILINE)
+AUPRC_RE = re.compile(r"^AUPRC:\s*([0-9]*\.?[0-9]+)\s*±\s*([0-9]*\.?[0-9]+)", re.MULTILINE)
 
 
 def parse_run_output(stdout: str) -> Dict[str, float]:
     auc_match = AUC_RE.search(stdout)
-    ap_match = AP_RE.search(stdout)
-    if auc_match is None or ap_match is None:
+    auprc_match = AUPRC_RE.search(stdout)
+    if auc_match is None or auprc_match is None:
         tail = "\n".join(stdout.strip().splitlines()[-40:])
         raise RuntimeError(
-            "Failed to parse final AUC/AP from run.py output. "
+            "Failed to parse final AUC/AUPRC from run.py output. "
             "Expected lines like:\n"
             "  AUC: 0.xxxxxx ± 0.xxxxxx\n"
-            "  AP : 0.xxxxxx ± 0.xxxxxx\n\n"
+            "  AUPRC: 0.xxxxxx ± 0.xxxxxx\n\n"
             f"Output tail:\n{tail}"
         )
     return {
         "auc_mean": float(auc_match.group(1)),
         "auc_std": float(auc_match.group(2)),
-        "ap_mean": float(ap_match.group(1)),
-        "ap_std": float(ap_match.group(2)),
+        "auprc_mean": float(auprc_match.group(1)),
+        "auprc_std": float(auprc_match.group(2)),
     }
 
 
@@ -146,21 +146,21 @@ def objective_factory(args: argparse.Namespace):
 
         if args.objective == "auc":
             score = metrics["auc_mean"]
-        elif args.objective == "ap":
-            score = metrics["ap_mean"]
-        elif args.objective == "auc_ap":
-            score = args.auc_weight * metrics["auc_mean"] + (1.0 - args.auc_weight) * metrics["ap_mean"]
+        elif args.objective == "auprc":
+            score = metrics["auprc_mean"]
+        elif args.objective == "auc_auprc":
+            score = args.auc_weight * metrics["auc_mean"] + (1.0 - args.auc_weight) * metrics["auprc_mean"]
         else:
             raise ValueError(f"Unknown objective: {args.objective}")
 
         if args.std_penalty > 0:
             if args.objective == "auc":
                 score -= args.std_penalty * metrics["auc_std"]
-            elif args.objective == "ap":
-                score -= args.std_penalty * metrics["ap_std"]
+            elif args.objective == "auprc":
+                score -= args.std_penalty * metrics["auprc_std"]
             else:
                 score -= args.std_penalty * (
-                    args.auc_weight * metrics["auc_std"] + (1.0 - args.auc_weight) * metrics["ap_std"]
+                    args.auc_weight * metrics["auc_std"] + (1.0 - args.auc_weight) * metrics["auprc_std"]
                 )
         return float(score)
 
@@ -213,8 +213,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output_dir", type=str, default="tune_results")
     parser.add_argument("--sampler", type=str, default="tpe", choices=["tpe", "random"])
     parser.add_argument("--timeout", type=int, default=None, help="Optuna timeout in seconds.")
-    parser.add_argument("--objective", type=str, default="auc_ap", choices=["auc", "ap", "auc_ap"])
-    parser.add_argument("--auc_weight", type=float, default=0.5, help="Used only when objective=auc_ap.")
+    parser.add_argument("--objective", type=str, default="auc_auprc", choices=["auc", "auprc", "auc_auprc"])
+    parser.add_argument("--auc_weight", type=float, default=0.5, help="Used only when objective=auc_auprc.")
     parser.add_argument("--std_penalty", type=float, default=0.0, help="Subtract std_penalty * metric_std from objective.")
 
     parser.add_argument("--lr_low", type=float, default=1e-4)
@@ -299,8 +299,8 @@ def main() -> None:
     print(f"value : {study.best_value:.6f}")
     print(f"AUC   : {study.best_trial.user_attrs.get('auc_mean', float('nan')):.6f} ± "
           f"{study.best_trial.user_attrs.get('auc_std', float('nan')):.6f}")
-    print(f"AP    : {study.best_trial.user_attrs.get('ap_mean', float('nan')):.6f} ± "
-          f"{study.best_trial.user_attrs.get('ap_std', float('nan')):.6f}")
+    print(f"AUPRC : {study.best_trial.user_attrs.get('auprc_mean', float('nan')):.6f} ± "
+          f"{study.best_trial.user_attrs.get('auprc_std', float('nan')):.6f}")
     print("-" * 80)
     print("Best params:")
     print(json.dumps(best_params, indent=2, ensure_ascii=False))

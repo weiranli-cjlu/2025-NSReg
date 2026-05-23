@@ -16,7 +16,7 @@ from datetime import datetime
 
 import numpy as np
 import torch
-from sklearn.metrics import average_precision_score, roc_auc_score
+from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 from pandas import DataFrame
 from tqdm import trange
 
@@ -29,7 +29,7 @@ class TrialResult:
     trial: int
     seed: int
     auc: float
-    ap: float
+    auprc: float
     loss: float
 
 
@@ -86,10 +86,11 @@ def evaluate(y_true: torch.Tensor, scores: torch.Tensor) -> Tuple[float, float]:
     y_np = y_true.detach().cpu().numpy().astype(int)
     s_np = scores.detach().cpu().numpy().astype(float)
     if len(np.unique(y_np)) < 2:
-        raise ValueError("AUC/AP require both normal and anomaly labels.")
-    auc = roc_auc_score(y_np, s_np)
-    ap = average_precision_score(y_np, s_np)
-    return float(auc), float(ap)
+        raise ValueError("AUC/AUPRC require both normal and anomaly labels.")
+    auc_score = roc_auc_score(y_np, s_np)
+    precision, recall, _ = precision_recall_curve(y_np, s_np)
+    auprc_score = auc(recall, precision)
+    return float(auc_score), float(auprc_score)
 
 
 def parse_args() -> argparse.Namespace:
@@ -181,8 +182,8 @@ def run_one_trial(args: argparse.Namespace, trial: int, data) -> TrialResult:
         y_train=data.y,
         pos_weight=pos_weight,
     )
-    auc, ap = evaluate(data.y, output.scores)
-    return TrialResult(trial=trial + 1, seed=seed, auc=auc, ap=ap, loss=output.loss)
+    auc, auprc = evaluate(data.y, output.scores)
+    return TrialResult(trial=trial + 1, seed=seed, auc=auc, auprc=auprc, loss=output.loss)
 
 
 def main() -> None:
@@ -194,7 +195,7 @@ def main() -> None:
         results.append(run_one_trial(args, trial, dataset))
 
     aucs = np.array([r.auc for r in results], dtype=float)
-    aps = np.array([r.ap for r in results], dtype=float)
+    auprcs = np.array([r.auprc for r in results], dtype=float)
 
     if args.result_csv is not None:
         data = {
@@ -203,12 +204,8 @@ def main() -> None:
             "trials": args.n_trials,
             "auc_mean": float(aucs.mean()),
             "auc_std": float(aucs.std(ddof=1) if len(aucs) > 1 else 0.0),
-            "auc_max": float(aucs.max()),
-            "auc": f"{aucs.mean()*100:.2f} ± {aucs.std(ddof=1)*100 if len(aucs) > 1 else 0:.2f}({aucs.max()*100:.2f})",
-            "ap_mean": float(aps.mean()),
-            "ap_std": float(aps.std(ddof=1) if len(aps) > 1 else 0.0),
-            "ap_max": float(aps.max()),
-            "ap": f"{aps.mean()*100:.2f} ± {aps.std(ddof=1) if len(aps) > 1 else 0:.2f}({aps.max()*100:.2f})",
+            "auprc_mean": float(auprcs.mean()),
+            "auprc_std": float(auprcs.std(ddof=1) if len(auprcs) > 1 else 0.0),
         }
         DataFrame([data]).to_csv(args.result_csv, index=False, mode="a", header=not os.path.exists(args.result_csv))
 
@@ -224,11 +221,11 @@ def main() -> None:
     print("-" * 80)
     for r in results:
         print(
-            f"trial={r.trial:02d} seed={r.seed:<6d} auc={r.auc:.6f} ap={r.ap:.6f} loss={r.loss:.6f}"
+            f"trial={r.trial:02d} seed={r.seed:<6d} auc={r.auc:.6f} auprc={r.auprc:.6f} loss={r.loss:.6f}"
         )
     print("-" * 80)
-    print(f"AUC: {aucs.mean():.6f} ± {aucs.std(ddof=1) if len(aucs) > 1 else 0.0:.6f}({aucs.max()*100:.2f})")
-    print(f"AP : {aps.mean():.6f} ± {aps.std(ddof=1) if len(aps) > 1 else 0.0:.6f}({aps.max()*100:.2f})")
+    print(f"AUC: {aucs.mean():.6f} ± {aucs.std(ddof=1) if len(aucs) > 1 else 0.0:.6f}")
+    print(f"AUPRC: {auprcs.mean():.6f} ± {auprcs.std(ddof=1) if len(auprcs) > 1 else 0.0:.6f}")
     print("=" * 80)
 
 
