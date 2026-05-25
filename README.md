@@ -212,7 +212,7 @@ python run.py --dataset tolokers \
 
 python run.py --dataset ACM \
   --result-csv results.csv --n_trials 10 \
-  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
+  --lr 0.0032590047927623573 --weight_decay 6.865349169990494e-06 --epochs 400 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.3135478739284697 --nsreg_weight 3.4921436047848764 --train_ratio 0.24704892208163698 --num_train_anomaly 20
 
 python run.py --dataset Flickr \
   --result-csv results.csv --n_trials 10 \
