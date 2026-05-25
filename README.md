@@ -213,10 +213,10 @@ python run.py --dataset tolokers \
 python run.py --dataset ACM \
   --result-csv results.csv --n_trials 10 \
   --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
-
+  
 python run.py --dataset Flickr \
   --result-csv results.csv --n_trials 10 \
-  --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
+  --lr 0.0019985233361873534 --weight_decay 2.564140900826996e-06 --epochs 300 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.24562741040513253 --nsreg_weight 1.5251439600938936 --train_ratio 0.17936967752434835 --num_train_anomaly 50
 
 python run.py --dataset BlogCatalog \
   --result-csv results.csv --n_trials 10 \
