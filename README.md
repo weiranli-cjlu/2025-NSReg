@@ -204,7 +204,7 @@ python run.py --dataset cora \
 
 python run.py --dataset citeseer \
   --result-csv results.csv --n_trials 10 \
-  --lr 0.0003571447962001007 --weight_decay 9.682012086882464e-05 --epochs 200 --hidden_dim 64 --emb_dim 32 --n_layers 1 --dropout 0.2955106162913183 --nsreg_weight 0.03852378615162033 --train_ratio 0.46122605763075264 --num_train_anomaly 50
+  --lr 0.0003298126239324297 --weight_decay 1.2724603889313737e-06 --epochs 400 --hidden_dim 32 --emb_dim 32 --n_layers 2 --dropout 0.08341291523855307 --nsreg_weight 0.04138842933496743 --train_ratio 0.30963265029839304 --num_train_anomaly 50
 
 python run.py --dataset tolokers \
   --result-csv results.csv --n_trials 10 \
