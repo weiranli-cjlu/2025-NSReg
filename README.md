@@ -200,7 +200,7 @@ python run.py --dataset Facebook \
 
 python run.py --dataset cora \
   --result-csv results.csv --n_trials 10 \
-  --lr 0.0011454201562599393 --weight_decay 2.106648601704219e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.015251476046457112 --nsreg_weight 0.021070472806578238 --train_ratio 0.11571459284336713 --num_train_anomaly 20 --balanced_loss
+  --lr 0.0007533071303213446 --weight_decay 2.3121319152332264e-06 --epochs 200 --hidden_dim 128 --emb_dim 32 --n_layers 2 --dropout 0.3149401340186112 --nsreg_weight 0.01030114138525813 --train_ratio 0.3044423276651803 --num_train_anomaly 50 --balanced_loss
 
 python run.py --dataset citeseer \
   --result-csv results.csv --n_trials 10 \
