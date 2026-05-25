@@ -176,23 +176,9 @@ python tune_optuna.py \
 
 ## 实验
 ```shell
-python run.py --result-csv results.csv --n_trials 10 --dataset book --lr 0.0004328 --weight_decay 0.0006351 --epochs 100 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.31485 --nsreg_weight 0.1976 --train_ratio 0.2456 --num_train_anomaly 0 
-
 python run.py --result-csv results.csv --n_trials 10 --dataset Disney --lr 0.001037 --weight_decay 0.00048696 --epochs 400 --hidden_dim 128 --emb_dim 256 --n_layers 2 --dropout 0.1192 --nsreg_weight 0.0103888 --train_ratio 0.5077 --num_train_anomaly 10 --balanced_loss
 
-python run.py --result-csv results.csv --n_trials 10 --dataset elliptic --lr 0.0011454 --weight_decay 2.1066e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.01525 --nsreg_weight 0.02107 --train_ratio 0.11571 --num_train_anomaly 20 --balanced_loss
-
-python run.py --result-csv results.csv --n_trials 10 --dataset questions --lr 0.001037 --weight_decay 0.00048696 --epochs 400 --hidden_dim 128 --emb_dim 256 --n_layers 2 --dropout 0.1192 --nsreg_weight 0.0103888 --train_ratio 0.50773 --num_train_anomaly 10 --balanced_loss
-
-python run.py --result-csv results.csv --n_trials 10 --dataset Reddit --lr 0.001145 --weight_decay 2.1066e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.01525 --nsreg_weight 0.02107 --train_ratio 0.11571 --num_train_anomaly 20 --balanced_loss
-
-python run.py --result-csv results.csv --n_trials 10 --dataset twitter --lr 0.0007476 --weight_decay 2.342e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15527 --nsreg_weight 0.9717775 --train_ratio 0.115256 --num_train_anomaly 20
-
-python run.py --result-csv results.csv --n_trials 10 --dataset weibo --lr 0.0007476 --weight_decay 2.34238e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15527 --nsreg_weight 0.9717775 --train_ratio 0.25586 --num_train_anomaly 20
-
-python run.py --result-csv results.csv --n_trials 10 --dataset cs
-
-python run.py --result-csv results.csv --n_trials 10 --dataset photo
+python run.py --result-csv results.csv --n_trials 10 --dataset book --lr 0.0004328 --weight_decay 0.0006351 --epochs 100 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.31485 --nsreg_weight 0.1976 --train_ratio 0.2456 --num_train_anomaly 0 
 
 python run.py --dataset Facebook \
   --result-csv results.csv --n_trials 10 \
@@ -205,6 +191,8 @@ python run.py --dataset cora \
 python run.py --dataset citeseer \
   --result-csv results.csv --n_trials 10 \
   --lr 0.0003298126239324297 --weight_decay 1.2724603889313737e-06 --epochs 400 --hidden_dim 32 --emb_dim 32 --n_layers 2 --dropout 0.08341291523855307 --nsreg_weight 0.04138842933496743 --train_ratio 0.30963265029839304 --num_train_anomaly 50
+
+python run.py --result-csv results.csv --n_trials 10 --dataset twitter --lr 0.0007476 --weight_decay 2.342e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15527 --nsreg_weight 0.9717775 --train_ratio 0.115256 --num_train_anomaly 20
 
 python run.py --dataset tolokers \
   --result-csv results.csv --n_trials 10 \
@@ -225,4 +213,18 @@ python run.py --dataset BlogCatalog \
 python run.py --dataset YelpChi \
   --result-csv results.csv --n_trials 10 \
   --lr 0.000747599299995651 --weight_decay 2.3423849847112885e-05 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.15526798896001015 --nsreg_weight 0.9717775305059632 --train_ratio 0.2558555380447055 --num_train_anomaly 20
+
+python run.py --result-csv results.csv --n_trials 10 --dataset Reddit --lr 0.001145 --weight_decay 2.1066e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.01525 --nsreg_weight 0.02107 --train_ratio 0.11571 --num_train_anomaly 20 --balanced_loss
+
+python run.py --dataset weibo \
+  --result-csv results.csv --n_trials 10 \
+  --lr 0.003665785952168278 --weight_decay 8.328141538419039e-07 --epochs 200 --hidden_dim 64 --emb_dim 64 --n_layers 3 --dropout 0.35454281709319696 --nsreg_weight 0.5746057297050972 --train_ratio 0.3675726395092746 --num_train_anomaly 50
+
+python run.py --result-csv results.csv --n_trials 10 --dataset questions --lr 0.001037 --weight_decay 0.00048696 --epochs 400 --hidden_dim 128 --emb_dim 256 --n_layers 2 --dropout 0.1192 --nsreg_weight 0.0103888 --train_ratio 0.50773 --num_train_anomaly 10 --balanced_loss
+
+python run.py --result-csv results.csv --n_trials 10 --dataset elliptic --lr 0.0011454 --weight_decay 2.1066e-06 --epochs 400 --hidden_dim 64 --emb_dim 256 --n_layers 2 --dropout 0.01525 --nsreg_weight 0.02107 --train_ratio 0.11571 --num_train_anomaly 20 --balanced_loss
+
+python run.py --result-csv results.csv --n_trials 10 --dataset cs
+
+python run.py --result-csv results.csv --n_trials 10 --dataset photo
 ```
